@@ -49,6 +49,16 @@ interactively, or run it non-interactively with `--clean`:
 missing. Copy `restore.config.example.sh` to `restore.config.sh` to personalize
 it (essential apps, config repos, dotfiles, login items).
 
+## Using an AI assistant
+
+Your app list will differ from the author's — that is expected: everything
+personal lives in the git-ignored `Brewfile` and `restore.config.sh`. If you
+use an AI coding assistant on your Mac (Claude Code, Codex CLI, …), see
+[ADAPT-WITH-AI.md](ADAPT-WITH-AI.md) for two copy-paste prompts: one that lets
+the assistant explain the principle and tailor the toolkit to your machine
+(including extending the browser matrix to Brave/Vivaldi/Arc etc.), and one
+that guides the restore on the new Mac.
+
 ## Manual prerequisites
 
 Four things no script can automate (restore.sh prompts at the right moments):
