@@ -15,19 +15,27 @@ encrypt what is sensitive, and replay it on a fresh machine.
 ### On the OLD Mac (before wiping)
 
 ```
-./backup-apps.sh               # Brewfile + manual-apps.md
-./backup-secrets.sh            # SSH, GPG, dev logins → encrypted archive
-./backup-browser-profiles.sh   # Edge/Edge Beta/Chrome profiles + Safe Storage keys
-./verify-backups.sh            # PROVE the password decrypts every archive
+./backup-apps.sh                   # Brewfile + manual-apps.md
+./backup-secrets.sh                # SSH, GPG, dev logins → encrypted archive
+./cleanup-browser-caches.sh        # OPTIONAL: shrink profiles by deleting regenerable caches
+./backup-browser-profiles.sh       # Edge/Edge Beta/Chrome profiles + Safe Storage keys
+./verify-backups.sh                # PROVE the password decrypts every archive
 ```
 
 Then store the whole folder in iCloud Drive or on a USB drive. If it syncs to
 the cloud, wait until every upload has finished (no cloud-with-arrow icons in
 Finder) before wiping the Mac.
 
-`cleanup-browser-caches.sh` is an optional extra: it deletes only regenerable
-browser caches (never cookies/logins/profiles) — useful to shrink the backup
-or free disk space at any time.
+The cache cleanup step is optional: `backup-browser-profiles.sh` excludes
+caches from the archive either way, but cleaning first shrinks the on-disk
+profiles, speeds up the packing pass, and keeps full-disk backups (Time
+Machine, cloud sync) smaller. It deletes only regenerable caches — never
+cookies, logins, storage or profiles. `backup-browser-profiles.sh` offers it
+interactively, or run it non-interactively with `--clean`:
+
+```
+./backup-browser-profiles.sh --clean
+```
 
 ### On the NEW Mac
 

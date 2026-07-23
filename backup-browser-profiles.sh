@@ -18,11 +18,20 @@
 #     chmod +x backup-browser-profiles.sh
 #     ./backup-browser-profiles.sh                 # target: the folder next to this script
 #     ./backup-browser-profiles.sh /Volumes/USB    # target: external drive (recommended for large profiles, can be several GB)
+#     ./backup-browser-profiles.sh --clean         # optional: delete regenerable caches first (see below)
 # =============================================================================
 
 set -uo pipefail
 
-DEST="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/browser-backup}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLEAN=0; DEST=""
+for arg in "$@"; do
+  case "$arg" in
+    --clean) CLEAN=1 ;;
+    *) DEST="$arg" ;;
+  esac
+done
+[ -n "$DEST" ] || DEST="$SCRIPT_DIR/browser-backup"
 mkdir -p "$DEST"
 
 # label | subfolder in Application Support | keychain service | keychain account | process pattern (main binary, not widgets/helpers)
@@ -51,6 +60,24 @@ have(){ command -v "$1" >/dev/null 2>&1; }
 have gpg || { say "${c_r}gpg missing — 'brew install gnupg' and retry.${c_reset}"; exit 1; }
 
 say "${c_b}${c_c}Backing up browser profiles → $DEST${c_reset}"
+
+# --- optional: shrink the profiles first by deleting regenerable caches -------
+# The archive excludes caches either way; cleaning beforehand shrinks the
+# on-disk profiles, speeds up the packing pass, and keeps any full-disk
+# backups (Time Machine, cloud sync) smaller. Deletes ONLY regenerable cache
+# directories — never cookies, logins, storage or preferences.
+CLEANER="$SCRIPT_DIR/cleanup-browser-caches.sh"
+if [ "$CLEAN" -eq 0 ] && [ -x "$CLEANER" ] && [ -t 0 ]; then
+  read -r -p "Optional: delete regenerable browser caches first (cleanup-browser-caches.sh)? [y/N] " ans || true
+  [ "${ans:-}" = "y" ] && CLEAN=1
+fi
+if [ "$CLEAN" -eq 1 ]; then
+  if [ -x "$CLEANER" ]; then
+    "$CLEANER" || say "${c_y}! cache cleanup finished with warnings — continuing${c_reset}"
+  else
+    say "${c_y}! cleanup-browser-caches.sh not found next to this script — skipping cleanup${c_reset}"
+  fi
+fi
 
 # --- ask for the password ONCE -----------------------------------------------
 say "${c_y}Choose a strong encryption password (then store it in your password manager!).${c_reset}"
