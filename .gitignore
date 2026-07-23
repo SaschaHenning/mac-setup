@@ -1,0 +1,9 @@
+# Machine-specific, generated, or sensitive — never commit
+Brewfile
+restore.config.sh
+manual-apps.md
+*.log
+*.bak-*
+secrets-backup/
+browser-backup/
+.DS_Store

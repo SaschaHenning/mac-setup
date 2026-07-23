@@ -1,0 +1,25 @@
+# Brewfile.example — illustrative only.
+# Generate yours with ./backup-apps.sh (it writes the real, git-ignored Brewfile).
+
+tap "homebrew/bundle"
+
+# CLI tools
+brew "git"
+brew "gh"
+brew "jq"
+brew "ripgrep"
+brew "gnupg"
+brew "mas"
+
+# GUI apps
+cask "visual-studio-code"
+cask "google-chrome"
+cask "microsoft-edge"
+cask "docker-desktop"
+
+# App Store apps (need App Store sign-in; install via mas)
+mas "Shazam", id: 897118787
+
+# VS Code extensions (dumped with `brew bundle dump --vscode`)
+vscode "esbenp.prettier-vscode"
+vscode "dbaeumer.vscode-eslint"
